@@ -1,0 +1,40 @@
+name: Main Branch Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+
+  docker_push:
+    name: "Push docker image"
+    uses: "philipcristiano/workflows/.github/workflows/docker-build-push.yml@main"
+    needs: [flake, rust]
+    with:
+      repository: ${{ github.repository }}
+      timeout: 25
+
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  rust:
+    uses: "philipcristiano/workflows/.github/workflows/rust.yml@main"
+
+  rust_release:
+    uses: "philipcristiano/workflows/.github/workflows/rust_release.yml@main"
+    needs: [flake, rust]
+    secrets:
+      WF_GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  flake:
+    uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
+    with:
+      script: |
+        cargo build
