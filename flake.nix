@@ -19,8 +19,15 @@
             buildInputs = [
                 rust-bin.stable.latest.default
                 darwin.apple_sdk.frameworks.Security # Should only be for darwin
-                darwin.apple_sdk.frameworks.SystemConfiguration # Should only be for darwin
+                darwin.apple_sdk.frameworks.SystemConfiguration
+                pkgs.postgresql_16
+                pkgs.foreman
+                pkgs.atlas
             ];
+            shellHook = ''
+              export PGDATA=$PWD/pgdata
+              export DATABASE_URL="postgres://timeline@localhost/timeline?sslmode=disable"
+            '';
           };
         }
       );

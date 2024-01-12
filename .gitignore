@@ -14,3 +14,4 @@ target/
 *.pdb
 
 /timeline.toml
+/pgdata
