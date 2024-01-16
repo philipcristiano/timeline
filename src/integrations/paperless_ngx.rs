@@ -1,18 +1,16 @@
 use crate::integration::IntegrationT;
 
-use serde::{ Deserialize};
-use reqwest::header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT};
+use reqwest::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
+use serde::Deserialize;
 
 use async_stream::{stream, try_stream};
+use chrono::prelude::*;
 
 use futures_core::stream::Stream;
 use futures_util::pin_mut;
 use futures_util::stream::StreamExt;
 pub fn new(host: String, token: String) -> PaperlessIntegration {
-    PaperlessIntegration{
-        host,
-        token
-    }
+    PaperlessIntegration { host, token }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -29,12 +27,13 @@ pub struct DocumentMeta {
 struct APIDocResponse {
     count: u32,
     next: String,
-    results: Vec<APIDoc>
+    results: Vec<APIDoc>,
 }
 #[derive(Clone, Debug, Deserialize)]
 struct APIDoc {
     id: u32,
     title: String,
+    created: DateTime<Utc>,
 }
 
 impl std::fmt::Display for APIDoc {
@@ -44,7 +43,7 @@ impl std::fmt::Display for APIDoc {
         // stream: `f`. Returns `fmt::Result` which indicates whether the
         // operation succeeded or failed. Note that `write!` uses syntax which
         // is very similar to `println!`.
-        write!(f, "{}", self.title)
+        write!(f, "{} {} {}", self.id, self.title, self.created)
     }
 }
 
@@ -54,11 +53,8 @@ use thiserror::Error;
 #[error(transparent)]
 pub struct APIError(#[from] reqwest::Error);
 
-
 impl PaperlessIntegration {
-
     fn documents(&self) -> impl Stream<Item = Result<APIDoc, reqwest::Error>> {
-
         let host = self.host.clone();
 
         let token = self.token.clone();
@@ -95,11 +91,8 @@ impl PaperlessIntegration {
 
 
         }
-
     }
-
 }
-
 
 impl IntegrationT for PaperlessIntegration {
     fn name(&self) -> String {
@@ -107,18 +100,13 @@ impl IntegrationT for PaperlessIntegration {
     }
 
     async fn get(&self) {
-
         let docs = self.documents();
         pin_mut!(docs);
-         while let Some(doc) = docs.next().await {
-             match doc {
-                 Err(e) => println!("Error {}", e),
-                 Ok(okdoc) => println!("Doc {}", okdoc),
-             };
-
+        while let Some(doc) = docs.next().await {
+            match doc {
+                Err(e) => println!("Error {}", e),
+                Ok(okdoc) => println!("Doc {}", okdoc),
+            };
         }
-
-
     }
-
 }

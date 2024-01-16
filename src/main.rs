@@ -7,7 +7,7 @@ use axum::{
 };
 use clap::Parser;
 use maud::{html, DOCTYPE};
-use serde::{Deserialize};
+use serde::Deserialize;
 use std::fs;
 use std::net::SocketAddr;
 
@@ -33,15 +33,14 @@ pub struct Args {
 
 mod auth;
 mod integration;
-mod integrations;
 mod integration_config;
+mod integrations;
 
 #[derive(Clone, Debug, Deserialize)]
 struct AppConfig {
     //auth: auth::AuthConfig,
     integration: Vec<integration_config::IntegrationConfig>,
 }
-
 
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
@@ -63,10 +62,10 @@ async fn main() {
         toml::from_str(&config_file_contents).expect("Problems parsing config file");
     tracing::debug!("Config {:?}", app_config);
 
-        for i in app_config.integration {
-            println!("Make integration => {:?}", i);
-            i.into_integration().get().await;
-        }
+    for i in app_config.integration {
+        println!("Make integration => {:?}", i);
+        i.into_integration().get().await;
+    }
 
     let app = Router::new()
         // `GET /` goes to `root`
