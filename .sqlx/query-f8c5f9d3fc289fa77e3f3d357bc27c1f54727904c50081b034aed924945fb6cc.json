@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n    INSERT INTO documents ( external_id, created, title )\n    VALUES ( $1, $2, $3 )\n    ON CONFLICT (external_id) DO UPDATE\n        SET created = EXCLUDED.created,\n            title = EXCLUDED.title\n    RETURNING external_id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "external_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Timestamptz",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f8c5f9d3fc289fa77e3f3d357bc27c1f54727904c50081b034aed924945fb6cc"
+}

@@ -11,7 +11,14 @@ use serde::Deserialize;
 use std::fs;
 use std::net::SocketAddr;
 
-use crate::integration::IntegrationT;
+use futures_core::stream::Stream;
+use futures_util::pin_mut;
+use futures_util::stream::StreamExt;
+
+use crate::integration::{IntegrationT, ItemT};
+
+use sqlx::postgres::PgPool;
+use sqlx::postgres::PgPoolOptions;
 
 use once_cell::sync::OnceCell;
 use tower_cookies::{Cookie, CookieManagerLayer, Cookies, Key};
@@ -40,6 +47,7 @@ mod integrations;
 struct AppConfig {
     //auth: auth::AuthConfig,
     integration: Vec<integration_config::IntegrationConfig>,
+    database_url: String,
 }
 
 use tower_http::trace::{self, TraceLayer};
@@ -62,9 +70,29 @@ async fn main() {
         toml::from_str(&config_file_contents).expect("Problems parsing config file");
     tracing::debug!("Config {:?}", app_config);
 
+    tracing::info!("connecting to {}", app_config.database_url);
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&app_config.database_url)
+        .await
+        .expect("Cannot connect to DB");
+
     for i in app_config.integration {
         println!("Make integration => {:?}", i);
-        i.into_integration().get().await;
+
+        let integration = i.into_integration();
+        let items = integration.get();
+
+        pin_mut!(items);
+        while let Some(item) = items.next().await {
+            match item {
+                Err(_) => (),
+                Ok(okitem) => {
+                    okitem.insert(&pool).await.expect("Insert");
+                    ()
+                }
+            };
+        }
     }
 
     let app = Router::new()

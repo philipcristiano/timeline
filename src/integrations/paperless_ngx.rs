@@ -1,9 +1,9 @@
-use crate::integration::IntegrationT;
+use crate::integration::{IntegrationT, ItemT};
 
 use reqwest::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use serde::Deserialize;
 
-use async_stream::{stream, try_stream};
+use async_stream::try_stream;
 use chrono::prelude::*;
 
 use futures_core::stream::Stream;
@@ -13,27 +13,48 @@ pub fn new(host: String, token: String) -> PaperlessIntegration {
     PaperlessIntegration { host, token }
 }
 
+use sqlx::postgres::PgPool;
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct PaperlessIntegration {
     host: String,
     token: String,
 }
 
-pub struct DocumentMeta {
-    id: String,
-}
-
 #[derive(Clone, Debug, Deserialize)]
 struct APIDocResponse {
-    count: u32,
+    count: i32,
     next: String,
     results: Vec<APIDoc>,
 }
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, sqlx::FromRow)]
 struct APIDoc {
-    id: u32,
+    id: i32,
     title: String,
     created: DateTime<Utc>,
+}
+
+impl ItemT for APIDoc {
+    async fn insert(&self, pool: &PgPool) -> anyhow::Result<(), anyhow::Error> {
+        let rec = sqlx::query!(
+            r#"
+    INSERT INTO documents ( external_id, created, title )
+    VALUES ( $1, $2, $3 )
+    ON CONFLICT (external_id) DO UPDATE
+        SET created = EXCLUDED.created,
+            title = EXCLUDED.title
+    RETURNING external_id
+            "#,
+            self.id,
+            self.created,
+            self.title
+        )
+        .fetch_one(pool)
+        .await?;
+        println!("Inserting!");
+
+        Ok(())
+    }
 }
 
 impl std::fmt::Display for APIDoc {
@@ -85,11 +106,7 @@ impl PaperlessIntegration {
                     yield doc
 
                 }
-
-
             }
-
-
         }
     }
 }
@@ -99,14 +116,15 @@ impl IntegrationT for PaperlessIntegration {
         String::from("Paperless NGX")
     }
 
-    async fn get(&self) {
+    fn get(&self) -> impl Stream<Item = Result<impl ItemT, anyhow::Error>> {
+        try_stream! {
         let docs = self.documents();
         pin_mut!(docs);
         while let Some(doc) = docs.next().await {
             match doc {
                 Err(e) => println!("Error {}", e),
-                Ok(okdoc) => println!("Doc {}", okdoc),
+                Ok(okdoc) => yield okdoc,
             };
-        }
+        }}
     }
 }

@@ -17,6 +17,8 @@ futures = "0.3.30"
 futures-core = "0.3.30"
 futures-util = "0.3.30"
 
+sqlx = { version = "0.7.3", features = ["runtime-tokio", "tls-rustls", "postgres", "macros", "chrono"] }
+
 # Waiting on a release of maud to have axum 0.7 compat
 # maud = { version = "0.25.0", features = ["axum"] }
 maud = { git = "https://github.com/lambda-fairy/maud.git", rev="320add8", features = ["axum"] }
