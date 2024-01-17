@@ -43,7 +43,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: rust-sql-test
+          POSTGRES_DB: timeline
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -52,12 +52,19 @@ jobs:
         ports:
           - 5432:5432
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4.1.1
 
       - name: Apply Schema
         uses: docker://arigaio/atlas:0.16.0-community
         env:
-          DATABASE_URL: "postgres://postgres:postgres@postgres/rust-sql-test?sslmode=disable"
+          DATABASE_URL: "postgres://postgres:postgres@postgres/timeline?sslmode=disable"
         with:
           args: schema apply --env local --auto-approve
+
+      - name: sqlx check
+        run: cargo install sqlx-cli && cargo sqlx prepare --check
+        # uses: docker://arigaio/atlas:0.16.0-community
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/timeline?sslmode=disable"
