@@ -38,8 +38,8 @@ impl ItemT for APIDoc {
     async fn insert(&self, pool: &PgPool) -> anyhow::Result<(), anyhow::Error> {
         let rec = sqlx::query!(
             r#"
-    INSERT INTO documents ( external_id, created, title )
-    VALUES ( $1, $2, $3 )
+    INSERT INTO documents ( external_id, created, title, notes )
+    VALUES ( $1, $2, $3, $3 )
     ON CONFLICT (external_id) DO UPDATE
         SET created = EXCLUDED.created,
             title = EXCLUDED.title
