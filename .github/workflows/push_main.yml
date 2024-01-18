@@ -1,0 +1,65 @@
+name: Main Branch Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+
+  docker_push:
+    name: "Push docker image"
+    uses: "philipcristiano/workflows/.github/workflows/docker-build-push.yml@main"
+    needs: [flake, rust]
+    with:
+      repository: ${{ github.repository }}
+      timeout: 25
+
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  atlas:
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rust-sql-test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Apply Schema
+        uses: docker://arigaio/atlas:0.16.0-community
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@postgres/rust-sql-test?sslmode=disable"
+        with:
+          args: schema apply --env local --auto-approve
+
+  rust:
+    uses: "philipcristiano/workflows/.github/workflows/rust.yml@main"
+
+  rust_release:
+    uses: "philipcristiano/workflows/.github/workflows/rust_release.yml@main"
+    needs: [flake, rust]
+    secrets:
+      WF_GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  flake:
+    uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
+    with:
+      script: |
+        cargo build

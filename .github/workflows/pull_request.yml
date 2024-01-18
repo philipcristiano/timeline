@@ -1,0 +1,70 @@
+name: Pull Request
+
+on:
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  automerge_dependabot:
+    permissions:
+      pull-requests: write
+      contents: write
+    uses: "philipcristiano/workflows/.github/workflows/automerge_dependabot.yml@main"
+    with:
+      automerge: true
+
+  check-for-cc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check-for-cc
+        id: check-for-cc
+        uses: agenthunt/conventional-commit-checker-action@v2.0.0
+
+  docker_build:
+    uses: "philipcristiano/workflows/.github/workflows/docker-build.yml@main"
+    with:
+      timeout: 25
+
+  rust:
+    uses: "philipcristiano/workflows/.github/workflows/rust.yml@main"
+
+  flake:
+    uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
+    with:
+      script: |
+        cargo build
+
+  atlas:
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: timeline
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Apply Schema
+        uses: docker://arigaio/atlas:0.16.0-community
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@postgres/timeline?sslmode=disable"
+        with:
+          args: schema apply --env local --auto-approve
+
+      - name: sqlx check
+        run: cargo install sqlx-cli && cargo sqlx prepare --check
+        # uses: docker://arigaio/atlas:0.16.0-community
+        env:
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/timeline?sslmode=disable"
