@@ -1,9 +1,13 @@
 [package]
-name = "timeline"
+name = "timeline-service"
 version = "0.0.1"
 edition = "2021"
 description = "Hello World with OIDC auth"
 license = "Apache-2.0"
+
+[[bin]]
+name = "timeline"
+path = "src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
