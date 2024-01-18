@@ -50,6 +50,11 @@ struct AppConfig {
     database_url: String,
 }
 
+#[derive(Clone)]
+struct AppState {
+    db: PgPool,
+}
+
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 
@@ -95,15 +100,21 @@ async fn main() {
         }
     }
 
+    let app_state = AppState {
+        db: pool
+    };
+
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(root))
+        .route("/docs", get(http_get_docs))
         // .route(
         //     "/login",
         //     get(oidc_login).with_state(app_config.auth.clone()),
         // )
         // .route("/login_auth", get(oidc_login_auth))
         // .with_state(app_config.auth.clone())
+        .with_state(app_state)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -123,6 +134,25 @@ async fn root() -> Response {
        (DOCTYPE)
             p { "Welcome!"}
             a href="/login" { "Login" }
+    }
+    .into_response()
+}
+
+
+async fn http_get_docs(state: State<AppState>) -> Response {
+
+    let docs = sqlx::query_as!(integrations::paperless_ngx::APIDoc, "select external_id as id, created, title from documents;")
+        .fetch_all(&state.db)
+        .await
+        .expect("DB call failed");
+
+    html! {
+       (DOCTYPE)
+            p { "Welcome!"}
+            a href="/login" { "Login" }
+            @for doc in &docs {
+            li { (doc.title) }
+        }
     }
     .into_response()
 }

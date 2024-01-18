@@ -28,10 +28,10 @@ struct APIDocResponse {
     results: Vec<APIDoc>,
 }
 #[derive(Clone, Debug, Deserialize, sqlx::FromRow)]
-struct APIDoc {
-    id: i32,
-    title: String,
-    created: DateTime<Utc>,
+pub struct APIDoc {
+    pub id: i32,
+    pub title: String,
+    pub created: DateTime<Utc>,
 }
 
 impl ItemT for APIDoc {
