@@ -13,6 +13,10 @@ RUN cargo install --path .
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y procps ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY atlas.hcl /
+COPY schema /schema
 COPY --from=builder /usr/local/cargo/bin/timeline /usr/local/bin/timeline
+
+COPY --from=arigaio/atlas:0.16.0-community /atlas /atlas
 
 ENTRYPOINT ["/usr/local/bin/timeline"]
