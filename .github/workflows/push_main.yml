@@ -10,7 +10,7 @@ jobs:
   docker_push:
     name: "Push docker image"
     uses: "philipcristiano/workflows/.github/workflows/docker-build-push.yml@main"
-    needs: [flake, rust]
+    needs: [flake, rust, atlas]
     with:
       repository: ${{ github.repository }}
       timeout: 25
@@ -49,7 +49,7 @@ jobs:
 
   rust_release:
     uses: "philipcristiano/workflows/.github/workflows/rust_release.yml@main"
-    needs: [flake, rust]
+    needs: [flake, rust, atlas]
     secrets:
       WF_GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
