@@ -2,7 +2,7 @@
 name = "timeline-service"
 version = "0.0.1"
 edition = "2021"
-description = "Hello World with OIDC auth"
+description = "A personal timeline"
 license = "Apache-2.0"
 
 [[bin]]
