@@ -1496,8 +1496,9 @@ checksum = "ed1202b2a6f884ae56f04cff409ab315c5ce26b5e58d7412e484f01fd52f52ef"
 
 [[package]]
 name = "maud"
-version = "0.25.0"
-source = "git+https://github.com/lambda-fairy/maud.git?rev=320add8#320add87a12d8e5be115de9e0fe3f4b331512a4a"
+version = "0.26.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df518b75016b4289cdddffa1b01f2122f4a49802c93191f3133f6dc2472ebcaa"
 dependencies = [
  "axum-core 0.4.3",
  "http 1.0.0",
@@ -1507,8 +1508,9 @@ dependencies = [
 
 [[package]]
 name = "maud_macros"
-version = "0.25.0"
-source = "git+https://github.com/lambda-fairy/maud.git?rev=320add8#320add87a12d8e5be115de9e0fe3f4b331512a4a"
+version = "0.26.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa453238ec218da0af6b11fc5978d3b5c3a45ed97b722391a2a11f3306274e18"
 dependencies = [
  "proc-macro-error",
  "proc-macro2",
@@ -3064,7 +3066,7 @@ dependencies = [
 
 [[package]]
 name = "timeline-service"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "anyhow",
  "async-stream",
