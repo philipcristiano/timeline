@@ -1,2 +1,2 @@
 [workspace]
-publish = false # disable `cargo publish`
+publish = true
