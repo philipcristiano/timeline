@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select external_id as id, created, title from documents;",
+  "query": "select external_id as id, created, title from documents order by created desc;",
   "describe": {
     "columns": [
       {
@@ -28,5 +28,5 @@
       false
     ]
   },
-  "hash": "fb12bebdfc92619130cc7d0db75712e5863644e147441fe088dcc074b84c2d53"
+  "hash": "0403a3d78b5a19d92581b9b4655df61f6b4fcc4f03506f2bc119cb0f0be8817e"
 }

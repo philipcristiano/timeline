@@ -11,12 +11,6 @@ use serde::Deserialize;
 use std::fs;
 use std::net::SocketAddr;
 
-use futures_core::stream::Stream;
-use futures_util::pin_mut;
-use futures_util::stream::StreamExt;
-
-use crate::integration::{IntegrationT, ItemT};
-
 use sqlx::postgres::PgPool;
 use sqlx::postgres::PgPoolOptions;
 
@@ -82,27 +76,19 @@ async fn main() {
         .await
         .expect("Cannot connect to DB");
 
+    let mut integrations = Vec::new();
+
     for i in app_config.integration {
         println!("Make integration => {:?}", i);
-
-        let integration = i.into_integration();
-        let items = integration.get();
-
-        pin_mut!(items);
-        while let Some(item) = items.next().await {
-            match item {
-                Err(_) => (),
-                Ok(okitem) => {
-                    okitem.insert(&pool).await.expect("Insert");
-                    ()
-                }
-            };
-        }
+        integrations.push(i.into_integration())
     }
 
-    let app_state = AppState {
-        db: pool
-    };
+    let pool2 = pool.clone();
+    tokio::spawn(async move {
+        integration::sync_all(integrations.clone(), pool2).await;
+    });
+
+    let app_state = AppState { db: pool.clone() };
 
     let app = Router::new()
         // `GET /` goes to `root`
@@ -138,20 +124,22 @@ async fn root() -> Response {
     .into_response()
 }
 
-
+use pretty_date::pretty_date_formatter::PrettyDateFormatter;
 async fn http_get_docs(state: State<AppState>) -> Response {
-
-    let docs = sqlx::query_as!(integrations::paperless_ngx::APIDoc, "select external_id as id, created, title from documents;")
-        .fetch_all(&state.db)
-        .await
-        .expect("DB call failed");
+    let docs = sqlx::query_as!(
+        integrations::paperless_ngx::APIDoc,
+        "select external_id as id, created, title from documents order by created desc;"
+    )
+    .fetch_all(&state.db)
+    .await
+    .expect("DB call failed");
 
     html! {
        (DOCTYPE)
             p { "Welcome!"}
             a href="/login" { "Login" }
             @for doc in &docs {
-            li { (doc.title) }
+            li { (doc.title) (doc.created.naive_utc().format_pretty())}
         }
     }
     .into_response()

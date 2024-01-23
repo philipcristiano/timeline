@@ -7,8 +7,6 @@ use async_stream::try_stream;
 use chrono::prelude::*;
 
 use futures_core::stream::Stream;
-use futures_util::pin_mut;
-use futures_util::stream::StreamExt;
 pub fn new(host: String, token: String) -> PaperlessIntegration {
     PaperlessIntegration { host, token }
 }
@@ -35,8 +33,8 @@ pub struct APIDoc {
 }
 
 impl ItemT for APIDoc {
-    async fn insert(&self, pool: &PgPool) -> anyhow::Result<(), anyhow::Error> {
-        let rec = sqlx::query!(
+    async fn insert(&self, pool: &PgPool) -> anyhow::Result<()> {
+        sqlx::query!(
             r#"
     INSERT INTO documents ( external_id, created, title )
     VALUES ( $1, $2, $3 )
@@ -75,7 +73,7 @@ use thiserror::Error;
 pub struct APIError(#[from] reqwest::Error);
 
 impl PaperlessIntegration {
-    fn documents(&self) -> impl Stream<Item = Result<APIDoc, reqwest::Error>> {
+    fn save_documents(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
         let host = self.host.clone();
 
         let token = self.token.clone();
@@ -92,7 +90,7 @@ impl PaperlessIntegration {
                      .header(CONTENT_TYPE, "application/json")
                      .header(ACCEPT, "application/json")
                      .send()
-                     .await?;
+                     .await.expect("b");
                 println!("HTTP Response {:?}", response);
                 let response_body = response
                      .json::<APIDocResponse>()
@@ -104,27 +102,30 @@ impl PaperlessIntegration {
 
                 for doc in response_body.results {
                     yield doc
-
+                    //doc.insert(&pool).await?
                 }
             }
         }
     }
 }
-
+use futures_util::stream::StreamExt;
 impl IntegrationT for PaperlessIntegration {
     fn name(&self) -> String {
         String::from("Paperless NGX")
     }
 
-    fn get(&self) -> impl Stream<Item = Result<impl ItemT, anyhow::Error>> {
+    fn go(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
+        let s = self.save_documents(pool);
+        use futures_util::pin_mut;
         try_stream! {
-        let docs = self.documents();
-        pin_mut!(docs);
-        while let Some(doc) = docs.next().await {
-            match doc {
-                Err(e) => println!("Error {}", e),
-                Ok(okdoc) => yield okdoc,
-            };
-        }}
+            pin_mut!(s);
+            while let Some(Ok(value)) = s.next().await {
+                println!("got item ");
+                yield value;
+            }
+        }
     }
+    //fn get(&self) -> impl Stream<Item = impl ItemT>{
+    //    self.documents()
+    //}
 }

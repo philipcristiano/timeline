@@ -2057,6 +2057,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 
 [[package]]
+name = "pretty_date"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e571dbb1016c8394a881479c80467b4809700c10b483dc220761fd09656eb29"
+dependencies = [
+ "chrono",
+ "lazy_static",
+]
+
+[[package]]
 name = "primeorder"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3079,6 +3089,7 @@ dependencies = [
  "maud",
  "once_cell",
  "openidconnect",
+ "pretty_date",
  "reqwest",
  "serde",
  "serde_json",

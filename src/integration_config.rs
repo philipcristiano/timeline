@@ -10,12 +10,9 @@ pub enum IntegrationConfig {
 }
 
 impl IntegrationConfig {
-    pub fn into_integration(self) -> impl IntegrationT {
+    pub fn into_integration(self) -> impl IntegrationT + Clone + Send {
         match self {
-            IntegrationConfig::PaperlessNGX { host, token } => {
-                let p = paperless_ngx::new(host, token);
-                p
-            }
+            IntegrationConfig::PaperlessNGX { host, token } => paperless_ngx::new(host, token),
         }
     }
 }
