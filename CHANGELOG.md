@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3](https://github.com/philipcristiano/timeline/compare/v0.0.2...v0.0.3) - 2024-01-24
+
+### Other
+- Sync in the background
+
 ## [0.0.1](https://github.com/philipcristiano/timeline/releases/tag/v0.0.1) - 2024-01-18
 
 ### Other
