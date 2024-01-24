@@ -2,6 +2,7 @@ FROM rust:1.75-bookworm as builder
 WORKDIR /usr/src/app
 
 COPY Cargo.toml Cargo.lock /usr/src/app/
+COPY --from=d3fk/tailwindcss:stable /tailwindcss /usr/local/bin/tailwindcss
 RUN \
     mkdir /usr/src/app/src && \
     echo 'fn main() {}' > /usr/src/app/src/main.rs && \

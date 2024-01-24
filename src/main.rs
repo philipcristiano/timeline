@@ -93,6 +93,7 @@ async fn main() {
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(http_get_docs))
+        .route("/static/tailwind.css", get(http_get_tailwind_css))
         // .route(
         //     "/login",
         //     get(oidc_login).with_state(app_config.auth.clone()),
@@ -125,12 +126,26 @@ async fn http_get_docs(state: State<AppState>) -> Response {
 
     html! {
        (DOCTYPE)
+            (maud_header())
             p { "Welcome!"}
             @for doc in &docs {
-            li { (doc.title) (doc.created.naive_utc().format_pretty())}
+            li { (doc.title) (" ") (doc.created.naive_utc().format_pretty())}
         }
     }
     .into_response()
+}
+
+fn maud_header() -> maud::Markup {
+    html! {
+        link rel="stylesheet" href="static/tailwind.css";
+    }
+}
+
+async fn http_get_tailwind_css() -> impl IntoResponse {
+    let t = include_bytes!("../tailwind/tailwind.css");
+    let mut headers = axum::http::HeaderMap::new();
+    headers.insert("Content-Type", "text/css".parse().unwrap());
+    (headers, t)
 }
 
 #[tracing::instrument]
