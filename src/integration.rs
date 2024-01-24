@@ -31,7 +31,6 @@ pub async fn sync_all(integrations: Vec<impl IntegrationT + Clone + Send + 'stat
                 let s = i.go(&pool2);
                 pin_mut!(s);
                 while let Some(Ok(value)) = s.next().await {
-                    println!("insert ");
                     value.insert(&pool2).await;
                 }
             });

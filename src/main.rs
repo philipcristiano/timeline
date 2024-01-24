@@ -92,8 +92,7 @@ async fn main() {
 
     let app = Router::new()
         // `GET /` goes to `root`
-        .route("/", get(root))
-        .route("/docs", get(http_get_docs))
+        .route("/", get(http_get_docs))
         // .route(
         //     "/login",
         //     get(oidc_login).with_state(app_config.auth.clone()),
@@ -114,16 +113,6 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-// basic handler that responds with a static string
-async fn root() -> Response {
-    html! {
-       (DOCTYPE)
-            p { "Welcome!"}
-            a href="/login" { "Login" }
-    }
-    .into_response()
-}
-
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
 async fn http_get_docs(state: State<AppState>) -> Response {
     let docs = sqlx::query_as!(
@@ -137,7 +126,6 @@ async fn http_get_docs(state: State<AppState>) -> Response {
     html! {
        (DOCTYPE)
             p { "Welcome!"}
-            a href="/login" { "Login" }
             @for doc in &docs {
             li { (doc.title) (doc.created.naive_utc().format_pretty())}
         }

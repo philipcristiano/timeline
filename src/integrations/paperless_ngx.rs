@@ -22,7 +22,7 @@ pub struct PaperlessIntegration {
 #[derive(Clone, Debug, Deserialize)]
 struct APIDocResponse {
     count: i32,
-    next: String,
+    next: Option<String>,
     results: Vec<APIDoc>,
 }
 #[derive(Clone, Debug, Deserialize, sqlx::FromRow)]
@@ -49,7 +49,6 @@ impl ItemT for APIDoc {
         )
         .fetch_one(pool)
         .await?;
-        println!("Inserting!");
 
         Ok(())
     }
@@ -96,9 +95,8 @@ impl PaperlessIntegration {
                      .json::<APIDocResponse>()
                      .await?;
 
-                println!("Next URL {}", response_body.next);
-                maybe_next_url = Some(response_body.next);
-                //maybe_next_url = Some(response_body.next);
+                println!("Next URL {:?}", response_body.next);
+                maybe_next_url = response_body.next;
 
                 for doc in response_body.results {
                     yield doc
@@ -119,9 +117,11 @@ impl IntegrationT for PaperlessIntegration {
         use futures_util::pin_mut;
         try_stream! {
             pin_mut!(s);
-            while let Some(Ok(value)) = s.next().await {
-                println!("got item ");
-                yield value;
+            while let Some(maybe_ok_value) = s.next().await {
+                match maybe_ok_value {
+                    Ok(value) => yield value,
+                    Err(e) => println!("Error: {:?}", e),
+                }
             }
         }
     }
