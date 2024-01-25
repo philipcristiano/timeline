@@ -15,3 +15,4 @@ target/
 
 /timeline.toml
 /pgdata
+/tailwind/tailwind.css

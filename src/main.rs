@@ -33,6 +33,7 @@ pub struct Args {
 }
 
 mod auth;
+mod html;
 mod integration;
 mod integration_config;
 mod integrations;
@@ -93,6 +94,7 @@ async fn main() {
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(http_get_docs))
+        .route("/static/tailwind.css", get(http_get_tailwind_css))
         // .route(
         //     "/login",
         //     get(oidc_login).with_state(app_config.auth.clone()),
@@ -123,14 +125,22 @@ async fn http_get_docs(state: State<AppState>) -> Response {
     .await
     .expect("DB call failed");
 
-    html! {
-       (DOCTYPE)
+    let content = html! {
             p { "Welcome!"}
             @for doc in &docs {
-            li { (doc.title) (doc.created.naive_utc().format_pretty())}
-        }
-    }
-    .into_response()
+                li { (doc.title) (" ") (doc.created.naive_utc().format_pretty())}
+            }
+    };
+    let page = html::maud_page(content);
+
+    page.into_response()
+}
+
+async fn http_get_tailwind_css() -> impl IntoResponse {
+    let t = include_bytes!("../tailwind/tailwind.css");
+    let mut headers = axum::http::HeaderMap::new();
+    headers.insert("Content-Type", "text/css".parse().unwrap());
+    (headers, t)
 }
 
 #[tracing::instrument]

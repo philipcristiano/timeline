@@ -40,12 +40,25 @@ jobs:
       - name: Apply Schema
         uses: docker://arigaio/atlas:0.16.0-community
         env:
+          TIMELINE_SKIP_TAILWIND: true
           DATABASE_URL: "postgres://postgres:postgres@postgres/rust-sql-test?sslmode=disable"
         with:
           args: schema apply --env local --auto-approve
 
+      - name: sqlx check
+        run: cargo install sqlx-cli && cargo sqlx prepare --check
+        # uses: docker://arigaio/atlas:0.16.0-community
+        env:
+          TIMELINE_SKIP_TAILWIND: true
+          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/timeline?sslmode=disable"
+
   rust:
     uses: "philipcristiano/workflows/.github/workflows/rust.yml@main"
+    with:
+      setup_script: |
+          curl -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.1/tailwindcss-linux-x64 -o tailwindcss
+          chmod +x tailwindcss
+          mv tailwindcss /usr/local/bin
 
   rust_release:
     uses: "philipcristiano/workflows/.github/workflows/rust_release.yml@main"
@@ -57,5 +70,7 @@ jobs:
   flake:
     uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
     with:
+      flakes-from-devshell: true
       script: |
+        unset DATABASE_URL
         cargo build
