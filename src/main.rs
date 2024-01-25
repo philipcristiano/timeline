@@ -33,6 +33,7 @@ pub struct Args {
 }
 
 mod auth;
+mod html;
 mod integration;
 mod integration_config;
 mod integrations;
@@ -124,21 +125,15 @@ async fn http_get_docs(state: State<AppState>) -> Response {
     .await
     .expect("DB call failed");
 
-    html! {
-       (DOCTYPE)
-            (maud_header())
+    let content = html! {
             p { "Welcome!"}
             @for doc in &docs {
-            li { (doc.title) (" ") (doc.created.naive_utc().format_pretty())}
-        }
-    }
-    .into_response()
-}
+                li { (doc.title) (" ") (doc.created.naive_utc().format_pretty())}
+            }
+    };
+    let page = html::maud_page(content);
 
-fn maud_header() -> maud::Markup {
-    html! {
-        link rel="stylesheet" href="static/tailwind.css";
-    }
+    page.into_response()
 }
 
 async fn http_get_tailwind_css() -> impl IntoResponse {

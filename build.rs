@@ -16,6 +16,8 @@ pub fn build_tailwind() {
             "{}/**/*.rs,./src/**/*.{{html,rs}},./index.html",
             target_dir.display(),
         ))
+        .arg("-i")
+        .arg("./tailwind/input.css")
         .arg("-o")
         .arg("./tailwind/tailwind.css")
         .arg("--minify")
