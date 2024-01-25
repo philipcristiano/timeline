@@ -61,6 +61,14 @@ jobs:
           chmod +x tailwindcss
           mv tailwindcss /usr/local/bin
 
+  release-please:
+    needs: [flake, rust, atlas]
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+          release-type: rust
+
   flake:
     uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
     with:
