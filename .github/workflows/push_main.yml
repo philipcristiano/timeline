@@ -25,7 +25,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: rust-sql-test
+          POSTGRES_DB: timeline
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -34,6 +34,7 @@ jobs:
         ports:
           - 5432:5432
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4.1.1
 
@@ -41,7 +42,7 @@ jobs:
         uses: docker://arigaio/atlas:0.16.0-community
         env:
           TIMELINE_SKIP_TAILWIND: true
-          DATABASE_URL: "postgres://postgres:postgres@postgres/rust-sql-test?sslmode=disable"
+          DATABASE_URL: "postgres://postgres:postgres@postgres/timeline?sslmode=disable"
         with:
           args: schema apply --env local --auto-approve
 
