@@ -126,7 +126,7 @@ async fn http_get_docs(state: State<AppState>) -> Response {
     .expect("DB call failed");
 
     let content = html! {
-            p { "Welcome!"}
+            p { "Paperless NGX Documents!"}
             @for doc in &docs {
                 li { (doc.title) (" ") (doc.created.naive_utc().format_pretty())}
             }
