@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4](https://github.com/philipcristiano/timeline/compare/v0.0.3...v0.0.4) - 2024-01-25
+
+### Other
+- Attempt 3 to release with tailwind artifact
+- Attempt 2 to release with tailwind.css build artifact
+- Ignore dirty files (because of tailwind.css)
+- Fix atlas job
+- Start styling
+- Generate and include tailwind css file
+- Handle no next URL
+
 ## [0.0.3](https://github.com/philipcristiano/timeline/compare/v0.0.2...v0.0.3) - 2024-01-24
 
 ### Other
