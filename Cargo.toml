@@ -16,7 +16,7 @@ anyhow = "1.0.79"
 async-stream = "0.3.5"
 axum = "0.7.4"
 chrono = { version = "0.4.34", features = ["serde"] }
-clap = { version = "4.4.18", features = ["derive", "env"]}
+clap = { version = "4.5.0", features = ["derive", "env"]}
 futures = "0.3.30"
 futures-core = "0.3.30"
 futures-util = "0.3.30"
@@ -36,7 +36,7 @@ service_conventions = "0.0.1"
 thiserror = "1.0.57"
 tokio = { version = "1.36.0", features = ["full", "rt"] }
 toml = "0.8.10"
-tonic = { version = "0.10.2", features = ["tls", "tls-roots"] }
+tonic = { version = "0.11.0", features = ["tls", "tls-roots"] }
 tower-cookies = { version = "0.10.0", features = ["signed", "private"]}
 tower-http = { version = "0.5.1", features = ["tracing", "trace"] }
 tracing = "0.1.40"
