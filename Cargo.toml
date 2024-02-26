@@ -38,7 +38,7 @@ tokio = { version = "1.36.0", features = ["full", "rt"] }
 toml = "0.8.10"
 tonic = { version = "0.11.0", features = ["tls", "tls-roots"] }
 tower-cookies = { version = "0.10.0", features = ["signed", "private"]}
-tower-http = { version = "0.5.1", features = ["tracing", "trace"] }
+tower-http = { version = "0.5.2", features = ["tracing", "trace"] }
 tracing = "0.1.40"
 url = "2.5.0"
 pretty_date = "0.1.2"
