@@ -10,6 +10,8 @@ RUN \
     rm -Rvf /usr/src/app/src
 
 COPY . .
+RUN touch src/main.rs
+RUN cargo build --release -v
 RUN cargo install --path .
 
 FROM debian:bookworm-slim
