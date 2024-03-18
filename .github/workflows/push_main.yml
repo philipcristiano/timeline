@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
 
       - name: Apply Schema
         uses: docker://arigaio/atlas:0.16.0-community
