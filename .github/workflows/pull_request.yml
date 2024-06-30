@@ -8,16 +8,6 @@ on:
 
 jobs:
 
-  automerge_dependabot:
-    permissions:
-      pull-requests: write
-      contents: write
-    uses: "philipcristiano/workflows/.github/workflows/automerge_dependabot.yml@main"
-    with:
-      automerge: true
-    secrets:
-      WF_GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-
   check-for-cc:
     runs-on: ubuntu-latest
     steps:
@@ -46,7 +36,7 @@ jobs:
         unset DATABASE_URL
         cargo build
 
-  atlas:
+  database:
     services:
       postgres:
         image: postgres:16
@@ -65,17 +55,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.7
 
-      - name: Apply Schema
-        uses: docker://arigaio/atlas:0.16.0-community
-        env:
-          TIMELINE_SKIP_TAILWIND: true
-          DATABASE_URL: "postgres://postgres:postgres@postgres/timeline?sslmode=disable"
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
         with:
-          args: schema apply --env local --auto-approve
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
-      - name: sqlx check
-        run: cargo install sqlx-cli && cargo sqlx prepare --check
-        # uses: docker://arigaio/atlas:0.16.0-community
-        env:
-          TIMELINE_SKIP_TAILWIND: true
-          DATABASE_URL: "postgres://postgres:postgres@localhost:5432/timeline?sslmode=disable"
+      - uses: workflow/nix-shell-action@v3.3.2
+        with:
+          flakes-from-devshell: true
+          script: |
+            unset DATABASE_URL
+            cargo build --bin timeline-migrate
+            cargo run --bin timeline-migrate -- --config-file="config.github-actions.toml" migrate

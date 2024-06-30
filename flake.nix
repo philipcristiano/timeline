@@ -18,20 +18,19 @@
           devShells.default = mkShell {
             buildInputs = [
                 rust-bin.stable.latest.default
+                rust-analyzer
                 pkgs.postgresql_16
-                pkgs.tailwindcss
-                pkgs.foreman
                 pkgs.openssl # native-tls is included in cargo, needs work to remove
-                pkgs.atlas
+                pkgs.foreman
+                pkgs.tailwindcss
             ] ++
               pkgs.lib.optionals pkgs.stdenv.isDarwin [
                 darwin.apple_sdk.frameworks.Security # Should only be for darwin
                 darwin.apple_sdk.frameworks.SystemConfiguration
-            ]
-            ;
+            ];
             shellHook = ''
               export PGDATA=$PWD/pgdata
-              export DATABASE_URL="postgres://timeline@localhost/timeline?sslmode=disable"
+              export DATABASE_URL="postgres://et@localhost/et?sslmode=disable"
             '';
           };
         }
