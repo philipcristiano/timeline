@@ -32,7 +32,7 @@ openidconnect = "3.5.0"
 reqwest = { version = "0.11.27", features = ["tokio-rustls", "serde_json", "rustls-tls", "json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-service_conventions = "0.0.5"
+service_conventions = "0.0.16"
 thiserror = "1.0.58"
 tokio = { version = "1.37.0", features = ["full", "rt"] }
 toml = "0.8.12"

@@ -741,7 +741,7 @@ dependencies = [
  "futures",
  "serde",
  "serde_json",
- "service_conventions 0.0.16",
+ "service_conventions",
  "sqlparser 0.47.0",
  "sqlx",
  "thiserror",
@@ -2843,21 +2843,6 @@ dependencies = [
 
 [[package]]
 name = "service_conventions"
-version = "0.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce552960213bd70a576fe9b3eebd177e510dc334bcab62ef143f8ab67669a3db"
-dependencies = [
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry-semantic-conventions",
- "opentelemetry_sdk",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "service_conventions"
 version = "0.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a1307d60806fb58728efeb6745297c5365e0a6a0e10e54f1f8bfa778f5ac471"
@@ -3412,7 +3397,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "service_conventions 0.0.5",
+ "service_conventions",
  "sqlparser 0.46.0",
  "sqlx",
  "thiserror",
