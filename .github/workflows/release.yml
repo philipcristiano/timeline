@@ -14,7 +14,6 @@ jobs:
     with:
       repository: ${{ github.repository }}
       timeout: 25
-      tag_pattern_prefix: timeline-server-
 
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
