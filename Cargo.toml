@@ -1,4 +1,5 @@
 [workspace]
+name = "timeline"
 resolver = "2"
 
 members = [
