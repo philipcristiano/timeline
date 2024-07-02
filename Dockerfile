@@ -3,12 +3,11 @@ WORKDIR /usr/src/app
 
 COPY . .
 COPY --from=d3fk/tailwindcss:stable /tailwindcss /usr/local/bin/tailwindcss
-RUN cargo install --path .
+RUN cargo build --release --target-dir=/usr/src/output
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y procps ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/local/cargo/bin/timeline-migrate /usr/local/bin/timeline-migrate
-COPY --from=builder /usr/local/cargo/bin/timeline /usr/local/bin/timeline
+COPY --from=builder /usr/src/output/timeline* /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/timeline"]
