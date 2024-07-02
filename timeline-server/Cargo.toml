@@ -46,3 +46,5 @@ pretty_date = "0.1.2"
 sqlparser = { version="0.46.0", git = "https://github.com/philipcristiano/sqlparser-rs.git", branch = "main"}
 declare_schema = { git = "https://github.com/philipcristiano/declare-schema.git", branch = "main"}
 extism = "1.4.1"
+axum-embed = "0.1.0"
+rust-embed = "8.4.0"

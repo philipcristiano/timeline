@@ -16,9 +16,14 @@ use sqlx::postgres::PgPoolOptions;
 
 use once_cell::sync::OnceCell;
 use tower_cookies::{Cookie, CookieManagerLayer, Cookies, Key};
+use rust_embed::RustEmbed;
 
 const COOKIE_NAME: &str = "auth_flow";
 static KEY: OnceCell<Key> = OnceCell::new();
+
+#[derive(RustEmbed, Clone)]
+#[folder = "static/"]
+struct StaticAssets;
 
 #[derive(Parser, Debug)]
 pub struct Args {
@@ -43,11 +48,27 @@ struct AppConfig {
     //auth: auth::AuthConfig,
     integration: Vec<integration_config::IntegrationConfig>,
     database_url: String,
+    auth: service_conventions::oidc::OIDCConfig,
 }
 
 #[derive(Clone)]
 struct AppState {
+    auth: service_conventions::oidc::AuthConfig,
     db: PgPool,
+}
+
+impl AppState {
+    fn from_config(item: AppConfig, db: PgPool) -> Self {
+        let auth_config = service_conventions::oidc::AuthConfig {
+            oidc_config: item.auth,
+            post_auth_path: "/logged_in".to_string(),
+            scopes: vec!["profile".to_string(), "email".to_string()],
+        };
+        AppState {
+            auth: auth_config,
+            db,
+        }
+    }
 }
 
 use tower_http::trace::{self, TraceLayer};
@@ -79,7 +100,7 @@ async fn main() {
 
     let mut integrations = Vec::new();
 
-    for i in app_config.integration {
+    for i in app_config.clone().integration {
         println!("Make integration => {:?}", i);
         integrations.push(i.into_integration())
     }
@@ -89,19 +110,16 @@ async fn main() {
         integration::sync_all(integrations.clone(), pool2).await;
     });
 
-    let app_state = AppState { db: pool.clone() };
+    let app_state = AppState::from_config(app_config, pool);
 
+    let oidc_router = service_conventions::oidc::router(app_state.auth.clone());
+    let serve_assets = axum_embed::ServeEmbed::<StaticAssets>::new();
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(http_get_docs))
-        .route("/static/tailwind.css", get(http_get_tailwind_css))
-        // .route(
-        //     "/login",
-        //     get(oidc_login).with_state(app_config.auth.clone()),
-        // )
-        // .route("/login_auth", get(oidc_login_auth))
-        // .with_state(app_config.auth.clone())
-        .with_state(app_state)
+        .with_state(app_state.clone())
+        .nest("/oidc", oidc_router.with_state(app_state.auth.clone()))
+        .nest_service("/static", serve_assets)
         .layer(CookieManagerLayer::new())
         .layer(
             TraceLayer::new_for_http()
@@ -134,99 +152,4 @@ async fn http_get_docs(state: State<AppState>) -> Response {
     let page = html::maud_page(content);
 
     page.into_response()
-}
-
-async fn http_get_tailwind_css() -> impl IntoResponse {
-    let t = include_bytes!("../tailwind/tailwind.css");
-    let mut headers = axum::http::HeaderMap::new();
-    headers.insert("Content-Type", "text/css".parse().unwrap());
-    (headers, t)
-}
-
-#[tracing::instrument]
-async fn oidc_login(State(config): State<auth::AuthConfig>, cookies: Cookies) -> impl IntoResponse {
-    let auth_client = auth::construct_client(config.clone()).await.unwrap();
-    let auth_content = auth::get_auth_url(auth_client).await;
-    let key = KEY.get().unwrap();
-    let private_cookies = cookies.private(key);
-    let cookie_val = serde_json::to_string(&auth_content.verify).unwrap();
-    private_cookies.add(Cookie::new(COOKIE_NAME, cookie_val));
-
-    Redirect::temporary(&auth_content.redirect_url.to_string())
-}
-
-#[derive(Debug, Deserialize)]
-struct OIDCAuthCode {
-    code: String,
-    state: String,
-}
-
-#[derive(Debug)]
-struct AuthError(anyhow::Error);
-
-// Tell axum how to convert `AppError` into a response.
-impl IntoResponse for AuthError {
-    fn into_response(self) -> Response {
-        tracing::info!("Auth error {:?}", self);
-        let resp = html! {
-        (DOCTYPE)
-            p { "You are not authorized"}
-            a href="/login" { "Restart" }
-        };
-        (StatusCode::UNAUTHORIZED, resp).into_response()
-    }
-}
-
-// impl From<serde_json::Error> for AuthError {
-//     fn from(_err: serde_json::Error) -> AuthError {
-//         AuthError(anyhow::anyhow!("Json serialization error"))
-//     }
-// }
-// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
-// `Result<_, AppError>`. That way you don't need to do that manually.
-impl<E> From<E> for AuthError
-where
-    E: Into<anyhow::Error>,
-{
-    fn from(err: E) -> Self {
-        Self(err.into())
-    }
-}
-
-#[tracing::instrument]
-async fn oidc_login_auth(
-    State(config): State<auth::AuthConfig>,
-    cookies: Cookies,
-    Query(oidc_auth_code): Query<OIDCAuthCode>,
-) -> Result<Response, AuthError> {
-    let auth_client = auth::construct_client(config.clone()).await.unwrap();
-    let key = KEY.get().unwrap();
-    let private_cookies = cookies.private(key);
-    let cookie = match private_cookies.get(COOKIE_NAME) {
-        Some(c) => c,
-        _ => return Ok(StatusCode::UNAUTHORIZED.into_response()),
-    };
-
-    let cookie_str = cookie.value();
-    let auth_verify: auth::AuthVerify = serde_json::from_str(&cookie_str)?;
-
-    if auth_verify.csrf_token.secret() != &oidc_auth_code.state {
-        tracing::error!("CSRF State doesn't match");
-        return Ok(StatusCode::UNAUTHORIZED.into_response());
-    }
-
-    let claims = auth::next(auth_client, auth_verify, oidc_auth_code.code).await?;
-
-    let resp = html! {
-        (DOCTYPE)
-        p { "User " (claims.subject().as_str()) " has authenticated successfully"}
-        p { "Email: " (
-                        claims
-                        .email()
-                        .map(|email| email.as_str())
-                        .unwrap_or("<not provided>")) }
-        a href="/login" { "Restart" }
-    };
-
-    Ok(resp.into_response())
 }
