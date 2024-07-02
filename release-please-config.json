@@ -1,9 +1,9 @@
 {
   "packages": {
-    ".": {
+    "timeline-server": {
+      "include-component-in-tag": false,
       "release-type": "rust"
-    },
-    "timeline-server": {}
+    }
   },
   "plugins": ["cargo-workspace"],
   "release-type": "rust"
