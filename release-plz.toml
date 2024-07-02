@@ -1,4 +1,0 @@
-[workspace]
-allow_dirty = true # tailwind/tailwind.css is generated at build time and reported as dirty
-publish_allow_dirty = true # tailwind/tailwind.css is generated at build time and reported as dirty
-publish = true
