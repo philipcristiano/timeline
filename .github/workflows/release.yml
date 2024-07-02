@@ -4,7 +4,7 @@ name: Docker Release
 on:
   push:
     tags:
-      - "timeline-server-v*"
+      - "v*"
 
 jobs:
 
