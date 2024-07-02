@@ -1,5 +1,7 @@
 {
   "packages": {
     "timeline-server": {}
-  }
+  },
+  "plugins": ["cargo-workspace"],
+  "release-type": "rust"
 }
