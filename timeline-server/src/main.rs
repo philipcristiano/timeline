@@ -61,7 +61,7 @@ impl AppState {
     fn from_config(item: AppConfig, db: PgPool) -> Self {
         let auth_config = service_conventions::oidc::AuthConfig {
             oidc_config: item.auth,
-            post_auth_path: "/logged_in".to_string(),
+            post_auth_path: "/".to_string(),
             scopes: vec!["profile".to_string(), "email".to_string()],
         };
         AppState {
@@ -134,7 +134,16 @@ async fn main() {
 }
 
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
-async fn http_get_docs(state: State<AppState>) -> Response {
+async fn http_get_docs(state: State<AppState>,
+    user: Option<service_conventions::oidc::OIDCUser>) -> Response {
+
+    if let None = user {
+        return html::maud_page(html! {
+            p { "Welcome! You need to login" }
+            a href="/oidc/login" { "Login" }
+        })
+        .into_response()
+    };
     let docs = sqlx::query_as!(
         integrations::paperless_ngx::APIDoc,
         "select external_id as id, created, title from documents order by created desc;"
