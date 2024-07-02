@@ -9,6 +9,6 @@ RUN cargo build --release --target-dir=/usr/src/output
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y procps ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/output/release/timeline*[!d] /usr/local/bin/
+COPY --from=builder /usr/src/output/release/timeline* /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/timeline"]
