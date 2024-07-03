@@ -7,6 +7,13 @@
 
 * Handle db issues and return error ([e03d060](https://github.com/philipcristiano/timeline/commit/e03d060678bdadf338c8283a6168b822029d97e5))
 
+## [0.1.1](https://github.com/philipcristiano/timeline/compare/timeline-server-v0.1.0...timeline-server-v0.1.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* Handle db issues and return error ([e03d060](https://github.com/philipcristiano/timeline/commit/e03d060678bdadf338c8283a6168b822029d97e5))
+
 ## [0.1.1](https://github.com/philipcristiano/timeline/compare/v0.1.0...v0.1.1) (2024-07-02)
 
 
