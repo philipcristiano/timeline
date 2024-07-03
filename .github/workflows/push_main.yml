@@ -60,6 +60,16 @@ jobs:
           chmod +x tailwindcss
           mv tailwindcss /usr/local/bin
 
+  # release-please-manifest:
+  #   needs: [flake, rust, database]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: googleapis/release-please-action@v4
+  #       with:
+  #         token: ${{ secrets.REPO_TOKEN }}
+  #         config-file: release-please-config.json
+  #         manifest-file: .release-please-manifest.json
+
   release-please:
     needs: [flake, rust, database]
     runs-on: ubuntu-latest
@@ -67,8 +77,8 @@ jobs:
       - uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.REPO_TOKEN }}
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
+          release-type: rust
+          path: timeline-server
 
   flake:
     uses: "philipcristiano/workflows/.github/workflows/nix.yml@main"
