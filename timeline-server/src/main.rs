@@ -14,12 +14,8 @@ use std::net::SocketAddr;
 use sqlx::postgres::PgPool;
 use sqlx::postgres::PgPoolOptions;
 
-use once_cell::sync::OnceCell;
-use tower_cookies::{Cookie, CookieManagerLayer, Cookies, Key};
 use rust_embed::RustEmbed;
-
-const COOKIE_NAME: &str = "auth_flow";
-static KEY: OnceCell<Key> = OnceCell::new();
+use tower_cookies::CookieManagerLayer;
 
 #[derive(RustEmbed, Clone)]
 #[folder = "static/"]
@@ -76,10 +72,6 @@ use tracing::Level;
 
 #[tokio::main]
 async fn main() {
-    // initialize tracing
-    let my_key: &[u8] = &[0; 64]; // Your real key must be cryptographically random
-    KEY.set(Key::from(my_key)).ok();
-
     let args = Args::parse();
 
     service_conventions::tracing::setup(args.log_level);
@@ -134,15 +126,16 @@ async fn main() {
 }
 
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
-async fn http_get_docs(state: State<AppState>,
-    user: Option<service_conventions::oidc::OIDCUser>) -> Response {
-
+async fn http_get_docs(
+    state: State<AppState>,
+    user: Option<service_conventions::oidc::OIDCUser>,
+) -> Response {
     if let None = user {
         return html::maud_page(html! {
             p { "Welcome! You need to login" }
             a href="/oidc/login" { "Login" }
         })
-        .into_response()
+        .into_response();
     };
     let docs = sqlx::query_as!(
         integrations::paperless_ngx::APIDoc,
