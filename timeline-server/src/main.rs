@@ -129,21 +129,20 @@ use pretty_date::pretty_date_formatter::PrettyDateFormatter;
 async fn http_get_docs(
     state: State<AppState>,
     user: Option<service_conventions::oidc::OIDCUser>,
-) -> Response {
+) -> Result<Response, AppError> {
     if let None = user {
-        return html::maud_page(html! {
+        return Ok(html::maud_page(html! {
             p { "Welcome! You need to login" }
             a href="/oidc/login" { "Login" }
         })
-        .into_response();
+        .into_response());
     };
     let docs = sqlx::query_as!(
         integrations::paperless_ngx::APIDoc,
         "select external_id as id, created, title from documents order by created desc;"
     )
     .fetch_all(&state.db)
-    .await
-    .expect("DB call failed");
+    .await?;
 
     let content = html! {
             p { "Paperless NGX Documents!"}
@@ -153,5 +152,30 @@ async fn http_get_docs(
     };
     let page = html::maud_page(content);
 
-    page.into_response()
+    Ok(page.into_response())
+}
+
+// Make our own error that wraps `anyhow::Error`.
+struct AppError(anyhow::Error);
+
+// Tell axum how to convert `AppError` into a response.
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Something went wrong: {}", self.0),
+        )
+            .into_response()
+    }
+}
+
+// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
+// `Result<_, AppError>`. That way you don't need to do that manually.
+impl<E> From<E> for AppError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(err: E) -> Self {
+        Self(err.into())
+    }
 }
