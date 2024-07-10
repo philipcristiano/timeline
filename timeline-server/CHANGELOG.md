@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6](https://github.com/philipcristiano/timeline/compare/v0.0.5...v0.0.6) (2024-07-10)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate service_conventions to 0.0.17 ([6f2c3ae](https://github.com/philipcristiano/timeline/commit/6f2c3aebb1fc6a269a1bb11c609ef6df4d027100))
+* **deps:** update rust crate tonic to 0.12.0 ([e65be53](https://github.com/philipcristiano/timeline/commit/e65be53a8750410ae25179da641ff913a89e5ec9))
+
 ## [0.0.5](https://github.com/philipcristiano/timeline/compare/v0.0.4...v0.0.5) (2024-07-03)
 
 
