@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/philipcristiano/timeline/compare/v0.0.6...v0.0.7) (2024-07-10)
+
+
+### Bug Fixes
+
+* Use common tracelayer ([b703108](https://github.com/philipcristiano/timeline/commit/b7031087bbcfa44bf05b0e6a9878847712cb465a))
+
 ## [0.0.6](https://github.com/philipcristiano/timeline/compare/v0.0.5...v0.0.6) (2024-07-10)
 
 
