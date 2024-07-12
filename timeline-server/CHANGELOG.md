@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/philipcristiano/timeline/compare/v0.0.7...v0.0.8) (2024-07-12)
+
+
+### Bug Fixes
+
+* Have specific health check ([c00f5dc](https://github.com/philipcristiano/timeline/commit/c00f5dc0d3aded64c6eb5d2b3daac52a016d6e8e))
+
 ## [0.0.7](https://github.com/philipcristiano/timeline/compare/v0.0.6...v0.0.7) (2024-07-10)
 
 
