@@ -114,12 +114,18 @@ async fn main() {
         .layer(CookieManagerLayer::new())
         .layer(
             service_conventions::tracing_http::trace_layer(Level::INFO)
-        );
+        )
+        .route("/_health", get(health))
+        ;
 
     let addr: SocketAddr = args.bind_addr.parse().expect("Expected bind addr");
     tracing::info!("listening on {}", addr);
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
+}
+
+async fn health() -> Response {
+    "OK".into_response()
 }
 
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
