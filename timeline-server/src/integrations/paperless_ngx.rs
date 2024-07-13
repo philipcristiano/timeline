@@ -72,7 +72,7 @@ use thiserror::Error;
 pub struct APIError(#[from] reqwest::Error);
 
 impl PaperlessIntegration {
-    fn save_documents(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
+    fn document_stream(&self) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
         let host = self.host.clone();
 
         let token = self.token.clone();
@@ -94,7 +94,6 @@ impl PaperlessIntegration {
 
                 for doc in response_body.results {
                     yield doc
-                    //doc.insert(&pool).await?
                 }
             }
         }
@@ -122,7 +121,7 @@ impl IntegrationT for PaperlessIntegration {
     }
 
     fn go(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
-        let s = self.save_documents(pool);
+        let s = self.document_stream();
         use futures_util::pin_mut;
         try_stream! {
             pin_mut!(s);
