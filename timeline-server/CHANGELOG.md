@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.9](https://github.com/philipcristiano/timeline/compare/v0.0.8...v0.0.9) (2024-07-13)
+
+
+### Bug Fixes
+
+* Add tracing for DB query ([ca77615](https://github.com/philipcristiano/timeline/commit/ca77615c104cbf4fe4d04ac014ff293d0314020f))
+* Instrument sync call ([d16146d](https://github.com/philipcristiano/timeline/commit/d16146dfedfe9434ba7135a6d8a866c5f49e666c))
+* Move a bit more to tracing ([1811d41](https://github.com/philipcristiano/timeline/commit/1811d41a5eaefe24ee4f6b8c784596972fa43fd3))
+
 ## [0.0.8](https://github.com/philipcristiano/timeline/compare/v0.0.7...v0.0.8) (2024-07-12)
 
 
