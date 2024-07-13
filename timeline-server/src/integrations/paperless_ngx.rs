@@ -72,7 +72,7 @@ use thiserror::Error;
 pub struct APIError(#[from] reqwest::Error);
 
 impl PaperlessIntegration {
-    fn save_documents(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
+    fn document_stream(&self) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
         let host = self.host.clone();
 
         let token = self.token.clone();
@@ -81,30 +81,38 @@ impl PaperlessIntegration {
 
             let client = reqwest::Client::new();
             while let Some(next_url) = maybe_next_url {
-                println!("Getting URL {} ", next_url);
+                tracing::debug!("Getting URL {} ", next_url);
 
-                let response = client
-                     .get(next_url)
-                     .header(AUTHORIZATION, format!("Token {token}"))
-                     .header(CONTENT_TYPE, "application/json")
-                     .header(ACCEPT, "application/json")
-                     .send()
-                     .await.expect("b");
-                println!("HTTP Response {:?}", response);
+                let response = request(&client, &next_url, &token).await?;
+                tracing::debug!("HTTP Response {:?}", response);
                 let response_body = response
                      .json::<APIDocResponse>()
                      .await?;
 
-                println!("Next URL {:?}", response_body.next);
+                tracing::debug!("Next URL {:?}", response_body.next);
                 maybe_next_url = response_body.next;
 
                 for doc in response_body.results {
                     yield doc
-                    //doc.insert(&pool).await?
                 }
             }
         }
     }
+}
+
+#[tracing::instrument(skip_all)]
+async fn request(
+    client: &reqwest::Client,
+    url: &String,
+    token: &String,
+) -> anyhow::Result<reqwest::Response> {
+    Ok(client
+        .get(url)
+        .header(AUTHORIZATION, format!("Token {token}"))
+        .header(CONTENT_TYPE, "application/json")
+        .header(ACCEPT, "application/json")
+        .send()
+        .await?)
 }
 use futures_util::stream::StreamExt;
 impl IntegrationT for PaperlessIntegration {
@@ -113,7 +121,7 @@ impl IntegrationT for PaperlessIntegration {
     }
 
     fn go(&self, pool: &PgPool) -> impl Stream<Item = anyhow::Result<impl ItemT>> {
-        let s = self.save_documents(pool);
+        let s = self.document_stream();
         use futures_util::pin_mut;
         try_stream! {
             pin_mut!(s);

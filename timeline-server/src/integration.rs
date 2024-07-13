@@ -19,21 +19,25 @@ pub trait ItemT {
         pool: &PgPool,
     ) -> impl std::future::Future<Output = anyhow::Result<()>> + std::marker::Send;
 }
-
 use tokio::time::{sleep, Duration};
+use tracing::Instrument;
 pub async fn sync_all(integrations: Vec<impl IntegrationT + Clone + Send + 'static>, pool: PgPool) {
     loop {
         for integration in integrations.clone() {
             let pool2 = pool.clone();
 
-            tokio::spawn(async move {
-                let i = integration.clone();
-                let s = i.go(&pool2);
-                pin_mut!(s);
-                while let Some(Ok(value)) = s.next().await {
-                    value.insert(&pool2).await;
+            let span = tracing::info_span!("Syn integration", name = integration.name());
+            tokio::spawn(
+                async move {
+                    let i = integration.clone();
+                    let s = i.go(&pool2);
+                    pin_mut!(s);
+                    while let Some(Ok(value)) = s.next().await {
+                        value.insert(&pool2).await;
+                    }
                 }
-            });
+                .instrument(span),
+            );
         }
         sleep(Duration::from_millis(1000 * 60 * 30)).await;
     }

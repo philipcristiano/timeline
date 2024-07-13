@@ -112,11 +112,8 @@ async fn main() {
         .nest("/oidc", oidc_router.with_state(app_state.auth.clone()))
         .nest_service("/static", serve_assets)
         .layer(CookieManagerLayer::new())
-        .layer(
-            service_conventions::tracing_http::trace_layer(Level::INFO)
-        )
-        .route("/_health", get(health))
-        ;
+        .layer(service_conventions::tracing_http::trace_layer(Level::INFO))
+        .route("/_health", get(health));
 
     let addr: SocketAddr = args.bind_addr.parse().expect("Expected bind addr");
     tracing::info!("listening on {}", addr);
@@ -126,6 +123,16 @@ async fn main() {
 
 async fn health() -> Response {
     "OK".into_response()
+}
+
+#[tracing::instrument(skip_all)]
+async fn get_docs(pool: &PgPool) -> anyhow::Result<Vec<integrations::paperless_ngx::APIDoc>> {
+    Ok(sqlx::query_as!(
+        integrations::paperless_ngx::APIDoc,
+        "select external_id as id, created, title from documents order by created desc;"
+    )
+    .fetch_all(pool)
+    .await?)
 }
 
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
@@ -140,12 +147,7 @@ async fn http_get_docs(
         })
         .into_response());
     };
-    let docs = sqlx::query_as!(
-        integrations::paperless_ngx::APIDoc,
-        "select external_id as id, created, title from documents order by created desc;"
-    )
-    .fetch_all(&state.db)
-    .await?;
+    let docs = get_docs(&state.db).await?;
 
     let content = html! {
             p { "Paperless NGX Documents!"}
