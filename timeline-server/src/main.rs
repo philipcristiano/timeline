@@ -128,6 +128,16 @@ async fn health() -> Response {
     "OK".into_response()
 }
 
+#[tracing::instrument(skip_all)]
+async fn get_docs(pool: &PgPool) -> anyhow::Result<Vec<integrations::paperless_ngx::APIDoc>> {
+    sqlx::query_as!(
+        integrations::paperless_ngx::APIDoc,
+        "select external_id as id, created, title from documents order by created desc;"
+    )
+    .fetch_all(pool)
+    .await?
+}
+
 use pretty_date::pretty_date_formatter::PrettyDateFormatter;
 async fn http_get_docs(
     state: State<AppState>,
@@ -140,12 +150,7 @@ async fn http_get_docs(
         })
         .into_response());
     };
-    let docs = sqlx::query_as!(
-        integrations::paperless_ngx::APIDoc,
-        "select external_id as id, created, title from documents order by created desc;"
-    )
-    .fetch_all(&state.db)
-    .await?;
+    let docs = get_docs(&state.db).await?;
 
     let content = html! {
             p { "Paperless NGX Documents!"}
