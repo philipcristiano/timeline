@@ -26,7 +26,7 @@ pub async fn sync_all(integrations: Vec<impl IntegrationT + Clone + Send + 'stat
         for integration in integrations.clone() {
             let pool2 = pool.clone();
 
-            let span = tracing::info_span!("Syn integration", name = integration.name());
+            let span = tracing::info_span!("Sync integration", name = integration.name());
             tokio::spawn(
                 async move {
                     let i = integration.clone();
