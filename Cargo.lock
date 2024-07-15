@@ -1035,7 +1035,7 @@ dependencies = [
 [[package]]
 name = "declare_schema"
 version = "0.0.1"
-source = "git+https://github.com/philipcristiano/declare-schema.git?branch=main#e81a37f0de9ed4f8cac7e0c2153bdd8d788e0148"
+source = "git+https://github.com/philipcristiano/declare-schema.git?branch=main#e423522656be148ecfc7095c9f316462f489f948"
 dependencies = [
  "anyhow",
  "clap",
