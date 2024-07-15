@@ -2,6 +2,7 @@ use crate::integration::{IntegrationT, ItemT};
 
 use reqwest::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use serde::Deserialize;
+use std::collections::HashMap;
 
 use async_stream::try_stream;
 use chrono::prelude::*;
@@ -106,11 +107,13 @@ async fn request(
     url: &String,
     token: &String,
 ) -> anyhow::Result<reqwest::Response> {
+    let tracing_headers = service_conventions::tracing_http::get_tracing_headers();
     Ok(client
         .get(url)
         .header(AUTHORIZATION, format!("Token {token}"))
         .header(CONTENT_TYPE, "application/json")
         .header(ACCEPT, "application/json")
+        .headers(tracing_headers)
         .send()
         .await?)
 }

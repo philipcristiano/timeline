@@ -3803,9 +3803,9 @@ dependencies = [
 
 [[package]]
 name = "service_conventions"
-version = "0.0.17"
+version = "0.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0ed26df4f168d7ab57fba6da5287c73ceedbcedd100373dc4d934d3591d7a39"
+checksum = "4467d10e5e048101684b91ed7e08fce56561b742e60f1601bedbf55c5f2535dd"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4406,6 +4406,7 @@ dependencies = [
  "futures",
  "futures-core",
  "futures-util",
+ "http 1.1.0",
  "maud",
  "once_cell",
  "openidconnect",
