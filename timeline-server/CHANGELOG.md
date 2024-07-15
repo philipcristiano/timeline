@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.10](https://github.com/philipcristiano/timeline/compare/v0.0.9...v0.0.10) (2024-07-15)
+
+
+### Bug Fixes
+
+* Pass along trace headers ([c69117f](https://github.com/philipcristiano/timeline/commit/c69117f856ff9d99441305cf5c6234e3120d4b08))
+* Typo ([74a0d9c](https://github.com/philipcristiano/timeline/commit/74a0d9cf2cdd005eb73d743ae3e7158b8af72a5f))
+
 ## [0.0.9](https://github.com/philipcristiano/timeline/compare/v0.0.8...v0.0.9) (2024-07-13)
 
 
