@@ -30,8 +30,8 @@
             ];
             shellHook = ''
               export PGDATA=$PWD/pgdata
-              export PGDATABASE=et
-              export PGUSER=et
+              export PGDATABASE=timeline
+              export PGUSER=timeline
             '';
           };
         }
