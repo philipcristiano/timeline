@@ -3,6 +3,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 COPY --from=d3fk/tailwindcss:stable /tailwindcss /usr/local/bin/tailwindcss
+ENV SQLX_OFFLINE=true
 RUN mkdir -p /usr/src/output
 RUN cargo build --release --target-dir=/usr/src/output
 
