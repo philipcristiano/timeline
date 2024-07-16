@@ -30,7 +30,8 @@
             ];
             shellHook = ''
               export PGDATA=$PWD/pgdata
-              export DATABASE_URL="postgres://timeline@localhost/timeline?sslmode=disable"
+              export PGDATABASE=et
+              export PGUSER=et
             '';
           };
         }

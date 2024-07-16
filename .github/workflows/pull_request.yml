@@ -33,7 +33,7 @@ jobs:
     with:
       flakes-from-devshell: true
       script: |
-        unset DATABASE_URL
+        export SQLX_OFFLINE=true
         cargo build
 
   database:
@@ -65,6 +65,6 @@ jobs:
         with:
           flakes-from-devshell: true
           script: |
-            unset DATABASE_URL
+            export SQLX_OFFLINE=true
             cargo build --bin timeline-migrate
             cargo run --bin timeline-migrate -- --config-file="config.github-actions.toml" migrate

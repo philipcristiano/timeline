@@ -48,7 +48,7 @@ jobs:
         with:
           flakes-from-devshell: true
           script: |
-            unset DATABASE_URL
+            export SQLX_OFFLINE=true
             cargo build --bin timeline-migrate
             cargo run --bin timeline-migrate -- --config-file="config.github-actions.toml" migrate
 
@@ -59,16 +59,6 @@ jobs:
           curl -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.1/tailwindcss-linux-x64 -o tailwindcss
           chmod +x tailwindcss
           mv tailwindcss /usr/local/bin
-
-  # release-please-manifest:
-  #   needs: [flake, rust, database]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: googleapis/release-please-action@v4
-  #       with:
-  #         token: ${{ secrets.REPO_TOKEN }}
-  #         config-file: release-please-config.json
-  #         manifest-file: .release-please-manifest.json
 
   release-please:
     needs: [flake, rust, database]
@@ -86,4 +76,5 @@ jobs:
       flakes-from-devshell: true
       script: |
         unset DATABASE_URL
+        export SQLX_OFFLINE=true
         cargo build
