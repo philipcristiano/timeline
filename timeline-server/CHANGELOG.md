@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.11](https://github.com/philipcristiano/timeline/compare/v0.0.10...v0.0.11) (2024-08-08)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate service_conventions to 0.0.19 ([54768cc](https://github.com/philipcristiano/timeline/commit/54768cc58f1ab14b58a809fdb18abfd74f85bcad))
+* **deps:** update rust crate sqlx to 0.8.0 ([6aafd65](https://github.com/philipcristiano/timeline/commit/6aafd65fed7726b2952747acada432e7f3a6c3c7))
+
 ## [0.0.10](https://github.com/philipcristiano/timeline/compare/v0.0.9...v0.0.10) (2024-07-15)
 
 
