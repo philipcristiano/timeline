@@ -2831,7 +2831,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18bec9b0adc4eba778b33684b7ba3e7137789434769ee3ce3930463ef904cfca"
 dependencies = [
  "anyhow",
- "itertools 0.10.5",
+ "itertools 0.12.1",
  "proc-macro2",
  "quote",
  "syn 2.0.76",
@@ -3583,14 +3583,15 @@ dependencies = [
 
 [[package]]
 name = "service_conventions"
-version = "0.0.19"
+version = "0.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d28cc5937af84d68e6f9e72c790b89aecba9502da6d6f8498ec915ffc5aa78b"
+checksum = "0edc4e2a3b2611cc86cc1cfa82d75c260cf2eb1ff59be80e66016b395b648b1f"
 dependencies = [
  "anyhow",
  "async-trait",
  "axum",
  "axum-core",
+ "chrono",
  "email_address",
  "http 1.1.0",
  "maud",
