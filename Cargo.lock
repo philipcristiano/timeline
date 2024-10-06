@@ -3560,9 +3560,9 @@ dependencies = [
 
 [[package]]
 name = "service_conventions"
-version = "0.0.21"
+version = "0.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6dd216ef760a12864e09045b7e637650b40f067eaca08d9d92cb51e6b84e7e0b"
+checksum = "86b2bd2fb980e802eaf7fd95d3b402c69859917a840c68337fa05ebba46db304"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -3581,6 +3581,7 @@ dependencies = [
  "redacted",
  "serde",
  "serde_json",
+ "thiserror",
  "tonic",
  "tower-cookies",
  "tower-http",
