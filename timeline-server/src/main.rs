@@ -39,7 +39,7 @@ mod integration;
 mod integration_config;
 mod integrations;
 
-#[derive(FromRef, Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct AppConfig {
     //auth: auth::AuthConfig,
     integration: Vec<integration_config::IntegrationConfig>,
@@ -47,7 +47,7 @@ struct AppConfig {
     auth: service_conventions::oidc::OIDCConfig,
 }
 
-#[derive(Clone)]
+#[derive(FromRef, Clone)]
 struct AppState {
     auth: service_conventions::oidc::AuthConfig,
     db: PgPool,
