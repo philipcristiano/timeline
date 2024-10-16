@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Query, State},
+    extract::{FromRef, Query, State},
     http::StatusCode,
     response::{IntoResponse, Redirect, Response},
     routing::get,
@@ -39,7 +39,7 @@ mod integration;
 mod integration_config;
 mod integrations;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(FromRef, Clone, Debug, Deserialize)]
 struct AppConfig {
     //auth: auth::AuthConfig,
     integration: Vec<integration_config::IntegrationConfig>,
