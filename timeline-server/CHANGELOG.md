@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.11](https://github.com/philipcristiano/timeline/compare/v0.0.10...v0.0.11) (2024-10-18)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate declare_schema to 0.0.5 ([3a0e09f](https://github.com/philipcristiano/timeline/commit/3a0e09f010a5730ee295e91af163881e16aa31c9))
+* **deps:** update rust crate service_conventions to 0.0.19 ([54768cc](https://github.com/philipcristiano/timeline/commit/54768cc58f1ab14b58a809fdb18abfd74f85bcad))
+* **deps:** update rust crate service_conventions to 0.0.20 ([3eb3f55](https://github.com/philipcristiano/timeline/commit/3eb3f554bc32430b34064308c9cb1240b4b5c16b))
+* **deps:** update rust crate service_conventions to 0.0.21 ([71f4767](https://github.com/philipcristiano/timeline/commit/71f476753c061a25eb69cf409d7f635fd818a5af))
+* **deps:** update rust crate service_conventions to 0.0.22 ([a174367](https://github.com/philipcristiano/timeline/commit/a1743677297ca4c2e52c233821cf1b51de891bb1))
+* **deps:** update rust crate service_conventions to 0.0.23 ([c946070](https://github.com/philipcristiano/timeline/commit/c946070feb62a0e342ff2ae25d9d3c7e7d530e67))
+* **deps:** update rust crate sqlx to 0.8.0 ([6aafd65](https://github.com/philipcristiano/timeline/commit/6aafd65fed7726b2952747acada432e7f3a6c3c7))
+* **deps:** update rust crate tower-http to 0.6.0 ([f7bca14](https://github.com/philipcristiano/timeline/commit/f7bca1470ca514e444c1cab73c81ec0f68fbb08f))
+
 ## [0.0.10](https://github.com/philipcristiano/timeline/compare/v0.0.9...v0.0.10) (2024-07-15)
 
 
