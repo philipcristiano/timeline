@@ -43,7 +43,7 @@ tracing = "0.1.40"
 url = "2.5.0"
 pretty_date = "0.1.2"
 
-declare_schema = { version = "0.0.5" }
+declare_schema = { version = "0.0.6" }
 extism = "1.4.1"
 axum-embed = "0.1.0"
 rust-embed = "8.4.0"
