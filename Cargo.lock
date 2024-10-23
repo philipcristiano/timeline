@@ -1183,9 +1183,9 @@ dependencies = [
 
 [[package]]
 name = "extism"
-version = "1.7.0"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c352d53d63c58d66868b65246ec491dab9c78b7425d2d221f0219d97765a3548"
+checksum = "c3da59fba4da905210ef7c4c2a9f784717de54afbfb3f07414de5b0b15d5ecc8"
 dependencies = [
  "anyhow",
  "cbindgen",
@@ -1209,9 +1209,9 @@ dependencies = [
 
 [[package]]
 name = "extism-convert"
-version = "1.7.0"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b2042dab1fdb408d7504446cfb10079815da8b45e192a8954bf568c8a43e65d"
+checksum = "96b6253fe1e378abdd0fd9fd01b53aa8757c6827cd3c48794b417e542d088d0e"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -1225,9 +1225,9 @@ dependencies = [
 
 [[package]]
 name = "extism-convert-macros"
-version = "1.7.0"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8bb2f0038f2c3b14daa95b132f4fc1bad786a92946c7c9c06e120985a1fc4028"
+checksum = "7022773c485da2122413c2edbf50b7dee135b6577cc5ac42dccc307e347ac5d6"
 dependencies = [
  "manyhow",
  "proc-macro-crate",
@@ -1238,9 +1238,9 @@ dependencies = [
 
 [[package]]
 name = "extism-manifest"
-version = "1.7.0"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "675c0d7e15bb5e6e2a520ea26c4309c047c30b16de852f26373de1906677a58d"
+checksum = "cca9129d54add3090148a17444879256b4ec3fd7c4269d2780cd70050232edda"
 dependencies = [
  "base64 0.22.1",
  "serde",
@@ -1989,15 +1989,6 @@ name = "itertools"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
@@ -2832,7 +2823,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9552f850d5f0964a4e4d0bf306459ac29323ddfbae05e35a7c0d35cb0803cc5"
 dependencies = [
  "anyhow",
- "itertools 0.13.0",
+ "itertools 0.10.5",
  "proc-macro2",
  "quote",
  "syn",
@@ -5253,7 +5244,7 @@ version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
