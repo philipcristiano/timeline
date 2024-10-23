@@ -940,9 +940,9 @@ dependencies = [
 
 [[package]]
 name = "declare_schema"
-version = "0.0.5"
+version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9ef21d6653fdbb69324e5bfe52a11fcf4d0e9fbec84d0ffafa85ed59627372a"
+checksum = "fdec031e6c9457b91a49c3ca605c3aa0013bf5fe1f2349fa67c8fc60aa7f4fce"
 dependencies = [
  "anyhow",
  "clap",
@@ -2823,7 +2823,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9552f850d5f0964a4e4d0bf306459ac29323ddfbae05e35a7c0d35cb0803cc5"
 dependencies = [
  "anyhow",
- "itertools 0.10.5",
+ "itertools 0.12.1",
  "proc-macro2",
  "quote",
  "syn",
@@ -5244,7 +5244,7 @@ version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
 dependencies = [
- "windows-sys 0.48.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
