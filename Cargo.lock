@@ -940,9 +940,9 @@ dependencies = [
 
 [[package]]
 name = "declare_schema"
-version = "0.0.7"
+version = "0.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75c41cc049f4f281626552ca11ff80fcfa7ecca3b2a9b17d2e5aa39fd34a0711"
+checksum = "4096c97dcb6e932910323ddf90a3c76de0af29e2650699048f2101d8396784ef"
 dependencies = [
  "anyhow",
  "clap",
