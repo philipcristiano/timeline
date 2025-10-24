@@ -961,9 +961,9 @@ dependencies = [
 
 [[package]]
 name = "declare_schema"
-version = "0.0.11"
+version = "0.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "76d3e4e471f5ff8822a6a5dbf3e8922bc40cfd42db2c1c1a53b7777c1dacdcf9"
+checksum = "6acc708f2f66d1b8e092a020d4bec55a2bf54124122a4b75a0aa52697d290a90"
 dependencies = [
  "anyhow",
  "clap",
@@ -974,7 +974,7 @@ dependencies = [
  "sqlx",
  "thiserror 2.0.17",
  "tokio",
- "toml 0.8.23",
+ "toml 0.9.8",
  "tracing",
  "url",
  "uuid",
@@ -3003,7 +3003,7 @@ dependencies = [
  "once_cell",
  "socket2 0.6.1",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -3957,9 +3957,9 @@ checksum = "3b9b39299b249ad65f3b7e96443bad61c02ca5cd3589f46cb6d610a0fd6c0d6a"
 
 [[package]]
 name = "sqlparser"
-version = "0.57.0"
+version = "0.59.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07c5f081b292a3d19637f0b32a79e28ff14a9fd23ef47bd7fce08ff5de221eca"
+checksum = "4591acadbcf52f0af60eafbb2c003232b2b4cd8de5f0e9437cb8b1b59046cc0f"
 dependencies = [
  "log",
  "recursive",
